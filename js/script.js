@@ -31,31 +31,50 @@ document.addEventListener('DOMContentLoaded', function() {
                 message: formData.get('message')
             };
             
-            // Simulate form submission (replace with actual API call)
-            setTimeout(function() {
-                // Show success message
+            // Send to Vercel API
+            fetch('/api/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.message === 'Email sent successfully') {
+                    // Show success message
+                    alertContainer.innerHTML = `
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>Thank you for your message! We will get back to you within 24 hours.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    `;
+                    
+                    // Reset form
+                    contactForm.reset();
+                    contactForm.classList.remove('was-validated');
+                } else {
+                    throw new Error(result.message);
+                }
+            })
+            .catch(error => {
+                // Show error message
                 alertContainer.innerHTML = `
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <i class="fas fa-check-circle me-2"></i>Thank you for your message! We will get back to you within 24 hours.
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>There was an error sending your message. Please try again.
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 `;
-                
-                // Reset form
-                contactForm.reset();
-                contactForm.classList.remove('was-validated');
-                
+                console.error('Error:', error);
+            })
+            .finally(() => {
                 // Reset button
                 submitBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Send Message';
                 submitBtn.disabled = false;
                 
                 // Scroll to alert
                 alertContainer.scrollIntoView({ behavior: 'smooth' });
-                
-                // Log form data (for development)
-                console.log('Contact form submitted:', data);
-                
-            }, 2000);
+            });
         });
         
         // Real-time validation feedback
