@@ -128,13 +128,10 @@ body {
 /* Partner Logos */
 .partner-logo {
   height: 80px;
+  max-width: 150px;
   object-fit: contain;
-  filter: grayscale(100%);
-  transition: filter 0.3s ease;
-}
-
-.partner-logo:hover {
-  filter: grayscale(0%);
+  margin: 0 auto;
+  display: block;
 }
 
 /* Contact Form */
